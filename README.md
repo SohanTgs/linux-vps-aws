@@ -1,6 +1,6 @@
-# 🖥️ Linux & Web Server — Personal Cheatsheet
+# 🖥️ Linux / VPS / AWS — Cheatsheet
 
-> Created for personal learning and quick future reference.
+> Created for learning and quick future reference.
 
 ---
 
