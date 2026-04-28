@@ -14,6 +14,11 @@ rm -rf .[^.]*
 # Delete a folder
 sudo rm -rf /opt/vscode
 
+# Delete all files inside /var/www/html (including hidden files)
+sudo rm -rf /var/www/html/*
+sudo rm -rf /var/www/html/.[!.]*
+sudo rm -rf /var/www/html/..?*
+
 # View / edit a file
 cat filename
 nano filename
@@ -27,11 +32,23 @@ nano filename
 # Give ownership to Apache
 sudo chown -R apache:apache /var/www/html
 
+# Give ownership to current user
+sudo chown -R $USER:$USER /var/www/html
+
+# Give ownership to ubuntu user
+sudo chown ubuntu:ubuntu index.html          # single file
+sudo chown -R ubuntu:ubuntu /var/www/        # entire project folder (Laravel best practice)
+
+# Give ownership to www-data (Apache web server user)
+sudo chown -R www-data:www-data /var/www/html
+
 # Take ownership of htdocs (for LAMPP)
 sudo chown -R $USER:$USER /opt/lampp/htdocs/
 
 # Set permissions
 sudo chmod -R 775 storage bootstrap/cache
+sudo chmod -R 775 /var/www/html/storage
+sudo chmod -R 775 /var/www/html/bootstrap/cache
 sudo chmod -R 777 /var/www/html/custom
 sudo chmod 755 filename
 sudo chmod +x filename   # make executable
@@ -45,6 +62,11 @@ which code
 > - `5` = read + execute (r-x)
 > - `775` = full access for owner & group, others can only read/execute
 > - `777` = everyone has full access (use in development only, never in production)
+
+> **Ownership tips (VPS/AWS):**
+> - `ubuntu:ubuntu` → Ubuntu server এ deploy করার সময় (SSH user)
+> - `www-data:www-data` → Apache যখন files serve করে তখন
+> - `$USER:$USER` → Local development এ নিজে access নিতে
 
 ---
 
@@ -71,6 +93,10 @@ sudo apt update
 
 # Switch PHP version
 sudo update-alternatives --config php
+
+# Install PHP extensions
+sudo apt update && sudo apt install php-bcmath
+sudo apt install php8.3-bcmath      # version-specific install
 ```
 
 ---
@@ -106,6 +132,13 @@ sudo systemctl stop apache2
 sudo systemctl restart apache2
 sudo systemctl disable apache2
 
+# Enable mod_rewrite (required for Laravel / .htaccess)
+sudo a2enmod rewrite
+sudo systemctl restart apache2
+
+# Check Apache virtual host configuration
+apache2ctl -S
+
 # Manually link phpMyAdmin
 sudo ln -s /usr/share/phpmyadmin /var/www/html/phpmyadmin
 
@@ -131,9 +164,20 @@ ssh-keygen
 
 # View the public key (to add to the server)
 cat ~/.ssh/id_rsa.pub
+
+# Connect to server using SSH key (AWS / EC2)
+ssh -i your-key.pem ubuntu@13.203.207.80
+
+# Connect to server using password (root login)
+ssh root@ip
 ```
 
-> Then add this public key to the server's `~/.ssh/authorized_keys` file.
+> Then add the public key to the server's `~/.ssh/authorized_keys` file.
+
+> **AWS tip:** `.pem` file এর permission ঠিক না থাকলে error দেবে। Fix:
+> ```bash
+> chmod 400 your-key.pem
+> ```
 
 ---
 
@@ -204,6 +248,10 @@ sudo xdg-open http://localhost
 | Install a package | `sudo apt install package-name` |
 | Remove a package | `sudo apt purge package-name` |
 | Clean system | `sudo apt autoremove && sudo apt clean` |
+| SSH connect (key) | `ssh -i key.pem ubuntu@ip` |
+| SSH connect (root) | `ssh root@ip` |
+| Enable mod_rewrite | `sudo a2enmod rewrite` |
+| Check Apache vhosts | `apache2ctl -S` |
 
 ---
 
