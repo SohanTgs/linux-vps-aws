@@ -1,0 +1,12 @@
+This is my existing cheatsheet MD file. I have learned some new commands/notes today, listed below.
+
+New content:
+[paste your new commands/notes here]
+
+Rules:
+- Compare each new item with the existing content
+- If it already exists in any section → skip it
+- If it matches an existing section → add it there
+- If it doesn't match any section → create a new section for it
+- Write the complete updated MD file
+- At the end, provide a summary: what was added where, what was skipped and why
